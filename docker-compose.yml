@@ -1,0 +1,61 @@
+services:
+
+    postgres:
+        environment:
+            POSTGRES_DB: turkey_challenge
+            POSTGRES_PASSWORD: ""
+            POSTGRES_HOST_AUTH_METHOD: trust
+        healthcheck:
+            interval: 5s
+            retries: 5
+            test: [ "CMD", "pg_isready", "-U", "postgres" ]
+            timeout: 5s
+        image: postgres:14-alpine
+        ports:
+            - 5432:5432
+        restart: always
+        volumes:
+            - postgres:/var/lib/postgresql/data
+
+    redis:
+        healthcheck:
+            interval: 5s
+            retries: 5
+            test: [ "CMD", "redis-cli", "ping" ]
+            timeout: 5s
+        image: redis:latest
+        ports:
+            - "6379:6379"
+        restart: always
+        volumes:
+            - redis:/data
+
+    scheduler:
+        build:
+            context: .
+            dockerfile: docker/local.Dockerfile
+        command: [ "php", "/var/www/html/artisan", "schedule:work" ]
+        depends_on:
+            postgres:
+                condition: service_healthy
+        restart: always
+        volumes:
+            - .:/var/www/html:cached
+
+    app:
+        build:
+            context: .
+            dockerfile: docker/local.Dockerfile
+        depends_on:
+            postgres:
+                condition: service_healthy
+        environment:
+            AUTORUN_ENABLED: true
+        ports:
+            - "8000:8080"
+        volumes:
+            - .:/var/www/html:cached
+
+volumes:
+    postgres:
+    redis:
