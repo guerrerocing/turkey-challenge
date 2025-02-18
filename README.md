@@ -22,11 +22,13 @@ Go to the project directory
 cd turkey-challenge
 ```
 
-⚠️ **Warning: Docker Required**  
-This project requires Docker to be installed on your machine.  
-Please ensure you have Docker installed and running before proceeding with the setup.
+⚠️ **Warning: Docker & Composer Required**  
+This project requires **Docker** and **Composer** to be installed on your machine.  
+Please ensure both are installed and running before proceeding with the setup.
 
-You can download Docker from: [https://www.docker.com/get-started](https://www.docker.com/get-started)
+You can download them here:
+- **Docker**: [https://www.docker.com/get-started](https://www.docker.com/get-started)
+- **Composer**: [https://getcomposer.org/download/](https://getcomposer.org/download/)
 
 
 ## Setting Up the Project with Docker
@@ -47,6 +49,11 @@ You do not have existing instances of PostgreSQL, PHP, or NGINX running on your 
 ```bash
   cp .env.example .env
 ```
+
+```bash
+  composer install
+```
+
 Running Docker
 ```bash
   docker-compose up --build -d
@@ -61,7 +68,6 @@ Go to container
 Run the following commands inside the container to set up the application:
 
 ```bash
-  composer install
 
   php artisan key:generate
 
