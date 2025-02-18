@@ -17,6 +17,18 @@ services:
         volumes:
             - postgres:/var/lib/postgresql/data
 
+    queue:
+        build:
+            context: .
+            dockerfile: docker/local.Dockerfile
+        command: [ "php", "/var/www/html/artisan", "queue:work" ]
+        depends_on:
+            postgres:
+                condition: service_healthy
+        restart: always
+        volumes:
+            - .:/var/www/html:cached
+
     redis:
         healthcheck:
             interval: 5s
